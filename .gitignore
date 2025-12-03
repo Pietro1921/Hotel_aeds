@@ -1,0 +1,11 @@
+# Ignorar arquivos compilados e executáveis
+*.o
+*.exe
+*.out
+*.bin
+
+# Ignorar arquivos de sistema e temporários
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
