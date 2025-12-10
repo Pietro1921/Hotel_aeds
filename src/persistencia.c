@@ -1,4 +1,4 @@
-#include "C:/Users/ifood/trabalho hotel descanso/include/persistencia.h"
+#include "../include/persistencia.h"
 
 // Funções para salvar e ler dados binários de arquivos
 int salvar_dados(const char *arquivo, const void *dados, size_t tam, int qtd) {

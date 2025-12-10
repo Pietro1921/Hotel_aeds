@@ -4,33 +4,104 @@
 #include "../include/persistencia.h"
 
 #define ARQ_QUARTOS "data/quartos.bin"
-#define MAX_QUARTOS 500
 
-/* Carrega todos os quartos em um array passado*/
-int carregar_quartos(Quarto *arr, int max, int *qtd) {
-    if (!ler_dados(ARQ_QUARTOS, arr, sizeof(Quarto), qtd)) {
-        *qtd = 0;
-        return 1;
+/* ===================== FUNÇÕES INTERNAS ===================== */
+
+static void carregar(Quarto lista[], int *qtd) {
+    ler_dados(ARQ_QUARTOS, lista, sizeof(Quarto), qtd);
+}
+
+static void salvar(Quarto lista[], int qtd) {
+    salvar_dados(ARQ_QUARTOS, lista, sizeof(Quarto), qtd);
+}
+
+/* ===================== CADASTRO DE QUARTO ===================== */
+
+int cadastrar_quarto(Quarto q) {
+    Quarto lista[200];
+    int qtd = 0;
+
+    carregar(lista, &qtd);
+
+    // Verifica duplicidade
+    for (int i = 0; i < qtd; i++) {
+        if (lista[i].numero == q.numero) {
+            return 0; // quarto já existe
+        }
     }
-    if (*qtd > max) *qtd = max;
+
+    // Inicializa status
+    strcpy(q.status, "desocupado");
+
+    lista[qtd] = q;
+    qtd++;
+
+    salvar(lista, qtd);
     return 1;
 }
 
-int cadastrar_quarto(Quarto q) {
-    Quarto lista[MAX_QUARTOS];
+/* ===================== DISPONIBILIDADE ===================== */
+
+int quarto_disponivel(int numero) {
+    Quarto lista[200];
     int qtd = 0;
-    if (!carregar_quartos(lista, MAX_QUARTOS, &qtd)) return -1;
+
+    carregar(lista, &qtd);
 
     for (int i = 0; i < qtd; i++) {
-        if (lista[i].numero == q.numero) return 0;
+        if (lista[i].numero == numero) {
+            return strcmp(lista[i].status, "desocupado") == 0;
+        }
     }
 
-    strncpy(q.status, "desocupado", sizeof(q.status)-1);
-    q.status[sizeof(q.status)-1] = '\0';
+    return 0; // quarto não encontrado ou ocupado
+}
 
-    if (qtd >= MAX_QUARTOS) return -1;
-    lista[qtd++] = q;
+/* ===================== OCUPAR / DESOCUPAR ===================== */
 
-    if (!salvar_dados(ARQ_QUARTOS, lista, sizeof(Quarto), qtd)) return -1;
-    return 1;
+void ocupar_quarto(int numero) {
+    Quarto lista[200];
+    int qtd = 0;
+
+    carregar(lista, &qtd);
+
+    for (int i = 0; i < qtd; i++) {
+        if (lista[i].numero == numero) {
+            strcpy(lista[i].status, "ocupado");
+            salvar(lista, qtd);
+            return;
+        }
+    }
+}
+
+void desocupar_quarto(int numero) {
+    Quarto lista[200];
+    int qtd = 0;
+
+    carregar(lista, &qtd);
+
+    for (int i = 0; i < qtd; i++) {
+        if (lista[i].numero == numero) {
+            strcpy(lista[i].status, "desocupado");
+            salvar(lista, qtd);
+            return;
+        }
+    }
+}
+
+/* ===================== VALOR DA DIÁRIA ===================== */
+
+float obter_valor_diaria(int numero) {
+    Quarto lista[200];
+    int qtd = 0;
+
+    carregar(lista, &qtd);
+
+    for (int i = 0; i < qtd; i++) {
+        if (lista[i].numero == numero) {
+            return lista[i].valor_diaria;
+        }
+    }
+
+    return -1; // quarto não encontrado
 }

@@ -31,3 +31,66 @@ int cadastrar_cliente(Cliente c) {
     if (!salvar_dados(ARQ_CLIENTES, lista, sizeof(Cliente), qtd)) return -1;
     return 1;
 }
+
+// PB20 - PESQUISAR CLIENTE
+void pesquisar_cliente() {
+    Cliente lista[1000];
+    int qtd = 0;
+    carregar_clientes(lista, 1000, &qtd);
+
+    if (qtd == 0) {
+        printf("Nenhum cliente cadastrado.\n");
+        return;
+    }
+
+    int opcao;
+    printf("\nPesquisar cliente por:\n");
+    printf("1 - Código\n");
+    printf("2 - Nome\n");
+    printf("> ");
+    scanf("%d%*c", &opcao);
+
+    if (opcao == 1) {
+        int codigo;
+        printf("Digite o código: ");
+        scanf("%d%*c", &codigo);
+
+        for (int i = 0; i < qtd; i++) {
+            if (lista[i].codigo == codigo) {
+                printf("\n--- Cliente Encontrado ---\n");
+                printf("Código: %d\n", lista[i].codigo);
+                printf("Nome: %s\n", lista[i].nome);
+                printf("Endereço: %s\n", lista[i].endereco);
+                printf("Telefone: %s\n", lista[i].telefone);
+                printf("Pontos Fidelidade: %d\n", lista[i].pontos_fidelidade);
+                return;
+            }
+        }
+        printf("Cliente não encontrado.\n");
+    }
+    else if (opcao == 2) {
+        char nome[50];
+        printf("Nome (ou parte do nome): ");
+        fgets(nome, 50, stdin);
+        nome[strcspn(nome, "\n")] = 0;
+
+        int achou = 0;
+        for (int i = 0; i < qtd; i++) {
+            if (strstr(lista[i].nome, nome) != NULL) {
+                printf("\n--- Cliente Encontrado ---\n");
+                printf("Código: %d\n", lista[i].codigo);
+                printf("Nome: %s\n", lista[i].nome);
+                printf("Endereço: %s\n", lista[i].endereco);
+                printf("Telefone: %s\n", lista[i].telefone);
+                printf("Pontos Fidelidade: %d\n", lista[i].pontos_fidelidade);
+                achou = 1;
+            }
+        }
+
+        if (!achou)
+            printf("Nenhum cliente corresponde à busca.\n");
+    }
+    else {
+        printf("Opção inválida.\n");
+    }
+}
