@@ -1,4 +1,4 @@
-#include "data.h"
+#include "../include/data.h"
 
 int diferenca_dias(Data entrada, Data saida) {
     int diasEntrada = entrada.ano*365 + entrada.mes*30 + entrada.dia;
@@ -6,3 +6,4 @@ int diferenca_dias(Data entrada, Data saida) {
 
     return diasSaida - diasEntrada;
 }
+
