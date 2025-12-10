@@ -33,6 +33,7 @@ typedef struct {
     char data_entrada[11];
     char data_saida[11];
     int qtd_diarias;
+    float valor_total;
     int cod_cliente;
     int num_quarto;
 } Estadia;
